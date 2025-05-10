@@ -21,7 +21,7 @@ Authorization: hmac-sha256 <signature>
 {
     "partner_id": "campr",
     "order_id": "consistent order id",
-    "sku": "DIGI2024",
+    "regions": ["nor", "swe"],
     "valid_until": "2024-01-01T00:00:00Z",
     "valid_after": "2023-12-01T00:00:00Z",
     "customer": {
@@ -35,7 +35,7 @@ Authorization: hmac-sha256 <signature>
 
 - `partner_id`: Required. Static value identifying the requesting partner. Use `campr`.
 - `order_id`: Optional, but recommended. Any consistent id for a specific order. Supplying it will make the request idempotent.
-- `sku`: Required. Which membership type to grant. Can be one of `GUIDE2024` or `DIGI2024`. GUIDE is for physical book, while DIGI is for only digital app.
+- `regions`: Required. List of regions to grant access to. Either `nor`, `swe`, or both.
 - `valid_until`: Required. When the expiry of the membership should be.
 - `valid_after`: Optional. When the membership should start. If not supplied it will start at the time of the request.
 - `customer`: Required.
@@ -74,7 +74,7 @@ let secretKey = "secret_key_9999";
 let jsonBody = JSON.stringify({
     "partner_id": "campr",
     "order_id": "consistent order id",
-    "sku": "DIGI2024",
+    "regions": ["nor", "swe"],
     "valid_until": "2024-01-01T00:00:00Z",
     "valid_after": "2023-12-01T00:00:00Z",
     "customer": {
@@ -84,21 +84,21 @@ let jsonBody = JSON.stringify({
         "regno": "BR12345"
     }
 });
-// '{"partner_id":"campr","order_id":"consistent order id","sku":"DIGI2024","valid_until":"2024-01-01T00:00:00Z","valid_after":"2023-12-01T00:00:00Z","customer":{"name":"Name Here","email":"name@gmail.com","locale":"en","regno":"BR12345"}}'
+// '{"partner_id":"campr","order_id":"consistent order id","regions":["nor","swe"],"valid_until":"2024-01-01T00:00:00Z","valid_after":"2023-12-01T00:00:00Z","customer":{"name":"Name Here","email":"name@gmail.com","locale":"en","regno":"BR12345"}}'
 let hmacBytes = crypto.createHmac("sha256", secretKey).update(jsonBody).digest();
-// <Buffer 37 ea c4 a1 37 c1 08 ef c5 fc ff fc 0b 32 8f 26 03 a1 27 20 ae 54 61 6e fa 4e 25 08 2b bb 45 52>
+// <Buffer bb 40 ce a1 ed 30 50 05 14 c1 76 76 10 77 84 fe 6f 4a 7b ce ac ab ca c6 6b 94 6c 01 d2 3a be f6>
 let hmacSignature = hmacBytes.toString("base64");
-// 'N+rEoTfBCO/F/P/8CzKPJgOhJyCuVGFu+k4lCCu7RVI='
+// 'u0DOoe0wUAUUwXZ2EHeE/m9Ke86sq8rGa5RsAdI6vvY='
 
 /// Better yet, bytes and signature can be combined into one step:
 let hmacSignature = crypto.createHmac("sha256", secretKey).update(jsonBody).digest("base64");
-// 'N+rEoTfBCO/F/P/8CzKPJgOhJyCuVGFu+k4lCCu7RVI='
+// 'u0DOoe0wUAUUwXZ2EHeE/m9Ke86sq8rGa5RsAdI6vvY='
 ```
 
 So header value becomes:
 
 ```
-Authorization: hmac-sha256 N+rEoTfBCO/F/P/8CzKPJgOhJyCuVGFu+k4lCCu7RVI=
+Authorization: hmac-sha256 u0DOoe0wUAUUwXZ2EHeE/m9Ke86sq8rGa5RsAdI6vvY=
 ```
 
 ## Open automatic account registration in app
